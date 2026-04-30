@@ -1,104 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Cloud Note Vault</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f6f9;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<title>Cloud Note Vault</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    header {
-      background: #4a90e2;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+  }
 
-    .container {
-      max-width: 800px;
-      margin: 30px auto;
-      padding: 20px;
-    }
+  body {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    color: #333;
+  }
 
-    textarea {
-      width: 100%;
-      height: 80px;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      resize: none;
-    }
+  header {
+    text-align: center;
+    padding: 20px;
+    color: white;
+    font-size: 26px;
+    font-weight: bold;
+  }
 
-    button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      background: #4a90e2;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
+  .container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+  }
 
-    button:hover {
-      background: #357bd8;
-    }
+  .input-card {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+  }
 
+  textarea {
+    width: 100%;
+    height: 80px;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    resize: none;
+    font-size: 15px;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background: #ff7a18;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    transform: scale(1.05);
+  }
+
+  .notes {
+    margin-top: 20px;
+  }
+
+  .note {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .note-text {
+    max-width: 70%;
+    word-wrap: break-word;
+  }
+
+  .delete {
+    background: #e74c3c;
+  }
+
+  .delete:hover {
+    background: #c0392b;
+  }
+
+  .empty {
+    text-align: center;
+    color: white;
+    margin-top: 20px;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+
+  @media(max-width: 600px) {
     .note {
-      background: white;
-      padding: 15px;
-      margin-top: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
     }
 
-    .note-text {
-      max-width: 80%;
+    .note button {
+      margin-top: 10px;
     }
-
-    .delete-btn {
-      background: #e74c3c;
-    }
-
-    .delete-btn:hover {
-      background: #c0392b;
-    }
-
-    .empty {
-      text-align: center;
-      color: gray;
-      margin-top: 20px;
-    }
-  </style>
+  }
+</style>
 </head>
+
 <body>
 
 <header>☁️ Cloud Note Vault</header>
 
 <div class="container">
 
-  <textarea id="noteInput" placeholder="Write your note here..."></textarea>
-  <button onclick="createNote()">Save Note</button>
+  <div class="input-card">
+    <textarea id="noteInput" placeholder="Write your note..."></textarea>
+    <button onclick="createNote()">Save Note</button>
+  </div>
 
-  <div id="notesList"></div>
+  <div id="notesList" class="notes"></div>
 
 </div>
 
 <script>
-  // 🔥 REPLACE THESE WITH YOUR FUNCTION URLs
-  const CREATE_URL = "https://func-cloudnotevault.azurewebsites.net/api/CreateNote?code=YOUR_KEY";
-  const GET_URL = "https://func-cloudnotevault.azurewebsites.net/api/GetNotes?code=YOUR_KEY";
-  const DELETE_URL = "https://func-cloudnotevault.azurewebsites.net/api/DeleteNote?code=YOUR_KEY";
+  // 🔥 REPLACE WITH YOUR URLs
+  const CREATE_URL = "https://func-cloudnotevault-f2aca2cjfcgjewg6.centralindia-01.azurewebsites.net/api/CreateNote?code=-LJA3ybFHfJn5sMq4zGCMqVa4BAsxjEUaU61zbl0eZ0wAzFuXHjA4A==";
+  const GET_URL = "https://func-cloudnotevault-f2aca2cjfcgjewg6.centralindia-01.azurewebsites.net/api/GetNotes?code=n8We1463QH836ikY1rIjxP5KaAncBEHcPSi00-8zIt_1AzFud6jQPA==";
+  const DELETE_URL = "https://func-cloudnotevault-f2aca2cjfcgjewg6.centralindia-01.azurewebsites.net/api/DeleteNote?code=Mr5z3wjepcUeGR8tu3AGRhwZcARjZNYnh2pYUwYyFhu6AzFud-GeCg==";
 
   async function createNote() {
     const text = document.getElementById('noteInput').value;
@@ -130,7 +170,7 @@
     const list = document.getElementById('notesList');
     list.innerHTML = "";
 
-    if (notes.length === 0) {
+    if (!notes.length) {
       list.innerHTML = "<div class='empty'>No notes yet</div>";
       return;
     }
@@ -141,7 +181,7 @@
 
       div.innerHTML = `
         <div class="note-text">${note.text}</div>
-        <button class="delete-btn" onclick="deleteNote('${note.id}')">Delete</button>
+        <button class="delete" onclick="deleteNote('${note.id}')">Delete</button>
       `;
 
       list.appendChild(div);
@@ -149,6 +189,8 @@
   }
 
   async function deleteNote(id) {
+    if (!confirm("Delete this note?")) return;
+
     await fetch(`${DELETE_URL}&id=${id}`, {
       method: "DELETE"
     });
